@@ -32,6 +32,7 @@ ENV/
 ai_atc.log
 flight_plan.json
 sample_flight_plan.json
+settings.json
 
 # IDE
 .vscode/

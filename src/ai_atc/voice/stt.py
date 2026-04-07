@@ -1,5 +1,5 @@
 """
-Cloud STT Engine — sends audio to Google Gemini for transcription.
+Cloud STT Engine — sends audio to Groq (Whisper) for transcription.
 Uses an aviation-specific prompt for better accuracy with ATC phraseology.
 """
 from __future__ import annotations
@@ -48,14 +48,14 @@ class ATCVoiceEngine:
         self._queue.put(filepath)
     def _worker_loop(self) -> None:
         from dotenv import load_dotenv
-        from google import genai
+        from groq import Groq
         load_dotenv()
-        api_key = os.getenv("GOOGLE_API_KEY")
+        api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
-            logger.error("GOOGLE_API_KEY not found in .env. Cloud STT will fail.")
+            logger.error("GROQ_API_KEY not found in .env. Cloud STT will fail.")
             return
-        client = genai.Client(api_key=api_key)
-        logger.info("Cloud STT Engine Ready (Google Gemini).")
+        client = Groq(api_key=api_key)
+        logger.info("Cloud STT Engine Ready (Groq Whisper).")
         if self.status_callback:
             self.status_callback("idle")
         while self._running:
@@ -72,18 +72,19 @@ class ATCVoiceEngine:
                     continue
                 if self.status_callback:
                     self.status_callback("thinking")
-                logger.info("Transcribing %s via Gemini...", filepath)
-                audio_file = client.files.upload(file=filepath)
+                logger.info("Transcribing %s via Groq (Whisper)...", filepath)
                 
-                response = client.models.generate_content(
-                    model="gemini-1.5-flash",
-                    contents=[AVIATION_STT_PROMPT, audio_file]
-                )
-                text = response.text.strip()
-                try:
-                    client.files.delete(name=audio_file.name)
-                except Exception:
-                    pass
+                with open(filepath, "rb") as file:
+                    transcription = client.audio.transcriptions.create(
+                        file=(filepath, file.read()),
+                        model="whisper-large-v3-turbo",
+                        prompt="Aviation ATC phraseology, squawk, alpha, bravo, cleared to land, maintain, United Airlines, Speedbird, Delta.",
+                        response_format="text",
+                        language="en",
+                        temperature=0.0
+                    )
+                
+                text = transcription.strip()
                 logger.info("Transcribed: '%s'", text)
                 if self.hearing_callback and text:
                     self.hearing_callback(text)

@@ -4,7 +4,7 @@ An AI-powered Air Traffic Controller for X-Plane 11/12 that uses a hybrid decisi
 
 ## Features
 - **Decision Tree Logic**: Uses a structured graph for every flight phase to ensure zero hallucinations and instant responses for routine calls.
-- **Gemini 1.5 Flash Integration**: Cloud-based STT and LLM routing for high-accuracy transcription and intelligent intent detection.
+- **Groq (Whisper) Integration**: Cloud-based STT and LLM routing for high-accuracy transcription and intelligent intent detection.
 - **Real Radio Effects**: Custom FFmpeg audio pipeline that adds telephone-band filtering, compression, and radio static to make the ATC sound like an actual VHF radio.
 - **Readback Verification**: Actually listens to your readbacks. If you forget your squawk or the assigned runway, the controller will catch it and ask for a correction.
 - **System Settings GUI**: Manage your X-Plane folder, SimBrief username, and default callsign directly in the app. Settings persist between sessions.
@@ -13,7 +13,7 @@ An AI-powered Air Traffic Controller for X-Plane 11/12 that uses a hybrid decisi
 ## Prerequisites
 - **Python 3.9+**
 - **X-Plane 11 or 12**
-- **Google AI API Key**: Get one for free at [Google AI Studio](https://aistudio.google.com/).
+- **Groq API Key**: Get one for free at [Groq Studio](https://console.groq.com).
 - **FFmpeg & ffplay**: Required for the radio voice effects and playback.
   - **Mac**: `brew install ffmpeg`
   - **Windows**: [Download from gyan.dev](https://www.gyan.dev/ffmpeg/builds/)
@@ -29,7 +29,7 @@ An AI-powered Air Traffic Controller for X-Plane 11/12 that uses a hybrid decisi
 2. **Setup environment**:
    Create a `.env` file in the root directory:
    ```env
-   GOOGLE_API_KEY=your_gemini_api_key_here
+   GROQ_API_KEY=your_groq_api_key_here
    ```
 
 3. **Install dependencies**:
@@ -43,7 +43,6 @@ An AI-powered Air Traffic Controller for X-Plane 11/12 that uses a hybrid decisi
 Make sure X-Plane is running, then start the AI ATC:
 
 ```bash
-# Just run it—you can set your X-Plane path and SimBrief in the GUI
 python -m ai_atc.main
 ```
 

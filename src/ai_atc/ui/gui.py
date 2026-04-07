@@ -268,19 +268,22 @@ class ATCApp(ctk.CTk):
         self.sidebar.grid(row=0, column=0, rowspan=3, sticky="nsew", padx=12, pady=12)
         self.sidebar.grid_propagate(False)
 
+        # Pack bottom elements FIRST so they always have space
+        self.cfg_btn = ctk.CTkButton(self.sidebar, text="SYSTEM SETTINGS", fg_color=PALETTE["surface"], hover_color=PALETTE["border"], text_color=PALETTE["label"], font=ctk.CTkFont(family=FONT_UI, size=10, weight="bold"), command=lambda: self._show_settings(True))
+        self.cfg_btn.pack(side="bottom", fill="x", pady=(8, 0))
+
+        # Pack top elements
         logo_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
-        logo_frame.pack(fill="x", pady=(8, 16))
+        logo_frame.pack(side="top", fill="x", pady=(0, 12))
         ctk.CTkLabel(logo_frame, text="AI ATC", font=ctk.CTkFont(family=FONT_UI, size=24, weight="bold"), text_color=PALETTE["text"]).pack(side="left")
         self.flight_info_lbl = ctk.CTkLabel(logo_frame, text="  READY", font=ctk.CTkFont(family=FONT_MONO, size=11, weight="bold"), text_color=PALETTE["accent"])
         self.flight_info_lbl.pack(side="left", pady=(6, 0))
 
         self.flight_panel = FlightDataPanel(self.sidebar)
-        self.flight_panel.pack(fill="x", pady=(0, 12))
+        self.flight_panel.pack(side="top", fill="x", pady=(0, 8))
+        
         self.radio_panel = RadioPanel(self.sidebar)
-        self.radio_panel.pack(fill="x")
-
-        self.cfg_btn = ctk.CTkButton(self.sidebar, text="SYSTEM SETTINGS", fg_color=PALETTE["surface"], hover_color=PALETTE["border"], text_color=PALETTE["label"], font=ctk.CTkFont(family=FONT_UI, size=10, weight="bold"), command=lambda: self._show_settings(True))
-        self.cfg_btn.pack(side="bottom", fill="x", pady=4)
+        self.radio_panel.pack(side="top", fill="both", expand=True)
 
     def _build_topbar(self):
         self.topbar = ctk.CTkFrame(self, height=48, fg_color=PALETTE["bg"])
@@ -367,12 +370,26 @@ class ATCApp(ctk.CTk):
             self.comm_log.append("PILOT", txt)
             self.stt_engine.callback(txt)
 
-    def update_aircraft_state(self, state): self._latest_state = state
+    def update_aircraft_state(self, state): 
+        self.after(0, lambda: setattr(self, '_latest_state', state))
+        
     def update_xplane_connection(self, conn):
-        self._connection_dot.configure(text="  X-PLANE CONNECTED" if conn else "  X-PLANE DISCONNECTED", text_color=PALETTE["green"] if conn else PALETTE["muted"])
-    def set_led_status(self, comp, stat): self.status_bar.set_status(comp, stat)
+        self.after(0, lambda: self._connection_dot.configure(
+            text="  X-PLANE CONNECTED" if conn else "  X-PLANE DISCONNECTED", 
+            text_color=PALETTE["green"] if conn else PALETTE["muted"]
+        ))
+        
+    def set_led_status(self, comp, stat): 
+        self.after(0, lambda: self.status_bar.set_status(comp, stat))
+        
     def set_hearing(self, txt):
-        self.hearing_label.configure(text=f"Hearing: \"{txt}\"...")
-        self.after(5000, lambda: self.hearing_label.configure(text=""))
-    def update_vu(self, level): self.status_bar.set_volume(level)
-    def mainloop(self): super().mainloop()
+        def _do_hearing():
+            self.hearing_label.configure(text=f"Hearing: \"{txt}\"...")
+            self.after(5000, lambda: self.hearing_label.configure(text=""))
+        self.after(0, _do_hearing)
+        
+    def update_vu(self, level): 
+        self.after(0, lambda: self.status_bar.set_volume(level))
+        
+    def mainloop(self): 
+        super().mainloop()

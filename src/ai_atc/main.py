@@ -225,7 +225,7 @@ def main() -> None:
         pass
     finally:
         voice_out.stop()
-        audio_capture.stop_recording()
+        audio_capture.stop()
         stt_engine.stop()
         aircraft_mgr.stop()
         xp_conn.disconnect()

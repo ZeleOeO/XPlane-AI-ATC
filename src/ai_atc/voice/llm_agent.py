@@ -17,13 +17,13 @@ import threading
 from typing import TYPE_CHECKING, Callable
 import os
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+from groq import Groq
+
 load_dotenv()
-api_key = os.getenv("GOOGLE_API_KEY")
+api_key = os.getenv("GROQ_API_KEY")
 _client = None
 if api_key:
-    _client = genai.Client(api_key=api_key)
+    _client = Groq(api_key=api_key)
 if TYPE_CHECKING:
     from ai_atc.atc.controller import ATCController
     from ai_atc.xplane.aircraft import AircraftState
@@ -47,7 +47,7 @@ class GenerativeATCAgent:
         get_aircraft_state: Callable[[], AircraftState],
         gui_log_callback: Callable[[str, str], None] | None = None,
         status_callback: Callable[[str], None] | None = None,
-        model: str = "gemini-1.5-flash",
+        model: str = "llama-3.3-70b-versatile",
     ) -> None:
         self.controller = controller
         self.get_state = get_aircraft_state
@@ -292,7 +292,7 @@ class GenerativeATCAgent:
         Returns the chosen DecisionNode or None on failure.
         """
         if not api_key:
-            logger.error("GOOGLE_API_KEY not set — falling back to first candidate")
+            logger.error("GROQ_API_KEY not set — falling back to first candidate")
             return candidates[0]
         candidate_summaries = "\n".join(
             f"- {c.id}: {fill_template(c.say_tpl, variables)[:100]}"
@@ -314,21 +314,21 @@ class GenerativeATCAgent:
         )
         global _client
         if not _client and api_key:
-             _client = genai.Client(api_key=api_key)
+             _client = Groq(api_key=api_key)
 
         try:
             response = await asyncio.to_thread(
-                _client.models.generate_content,
+                _client.chat.completions.create,
                 model=self.model,
-                contents=user_prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    temperature=0.1,
-                    max_output_tokens=256,
-                    response_mime_type="application/json",
-                )
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.1,
+                max_tokens=256,
+                response_format={"type": "json_object"}
             )
-            raw = response.text.strip()
+            raw = response.choices[0].message.content.strip()
             logger.debug("LLM decision raw: %s", raw)
             parsed = self._extract_json(raw)
             if parsed and "next_state" in parsed:
