@@ -186,7 +186,10 @@ def main() -> None:
     # Wire Agent callbacks to Controller state transitions
     controller._decision_transition_cb = lambda state_id: setattr(agent, "_current_state_id", state_id)
 
-    stt_engine = ATCVoiceEngine(callback=lambda text: agent.callback(text))
+    stt_engine = ATCVoiceEngine(
+        callback=lambda text: agent.callback(text),
+        get_context=lambda: agent.get_stt_context(),
+    )
     stt_engine.start()
 
     audio_capture = AudioCapture(on_capture_complete=stt_engine.transcribe_file)
