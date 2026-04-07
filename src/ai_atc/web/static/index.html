@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI ATC</title>
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div class="status-indicator">
+                <span class="dot" id="system-dot"></span>
+                <span id="system-status">Disconnected</span>
+            </div>
+            <div class="active-frequency">
+                COM1: <span id="com-freq">121.700</span>
+            </div>
+            <div class="header-controls">
+                <div class="voice-activity-indicators">
+                    <div id="indicator-mic" class="indicator-bulb" title="Microphone (Recording)">🎤</div>
+                    <div id="indicator-brain" class="indicator-bulb" title="AI Engine (Thinking)">🧠</div>
+                    <div id="indicator-mouth" class="indicator-bulb" title="ATC Voice (Talking)">🔊</div>
+                </div>
+                <button class="icon-btn">⚙️</button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-panel">
+            
+            <!-- LEFT COLUMN: TELEMETRY -->
+            <aside class="col-left">
+                <div class="panel-card flight-status">
+                    <h2>FLIGHT STATUS</h2>
+                    
+                    <div class="status-row">
+                        <span class="label">PHASE</span>
+                        <span class="value phase-badge" id="hud-phase">PARKED</span>
+                    </div>
+                    
+                    <div class="status-row">
+                        <span class="label">RUNWAY</span>
+                        <span class="value" id="hud-runway">---</span>
+                    </div>
+
+                    <div class="status-row">
+                        <span class="label">ALTITUDE</span>
+                        <span class="value mono"><span id="hud-alt">0</span> FT</span>
+                    </div>
+
+                    <div class="status-row">
+                        <span class="label">HEADING</span>
+                        <span class="value mono"><span id="hud-hdg">000</span>°</span>
+                    </div>
+
+                    <div class="status-row">
+                        <span class="label">SQUAWK</span>
+                        <span class="value mono accent" id="hud-squawk">1200</span>
+                    </div>
+                </div>
+
+                <div class="panel-card stt-status" id="stt-status-card">
+                    <h2>AI ENGINE</h2>
+                    <div class="status-row">
+                        <span class="label">STT STATE</span>
+                        <span class="value" id="stt-status">IDLE</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- CENTER COLUMN: TRANSCRIPTS -->
+            <section class="col-center">
+                <div class="transcript-container" id="transcript-box">
+                    <div class="transcript-placeholder" id="placeholder-text">
+                        Awaiting initial contact...
+                    </div>
+                    <!-- Chat bubbles will go here -->
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: QUICK ACTIONS -->
+            <aside class="col-right">
+                <div class="panel-card quick-actions">
+                    <h2>ACTIONS</h2>
+                    <button class="action-btn" disabled>Say Again (Unavailable)</button>
+                    <button class="action-btn" disabled>Readback (Auto)</button>
+                    <div class="divider"></div>
+                    <label class="toggle-container">
+                        <input type="checkbox" id="copilot-toggle">
+                        <span class="checkmark"></span>
+                        Auto-Copilot Radio
+                    </label>
+                </div>
+            </aside>
+
+        </main>
+
+        <!-- BOTTOM BAR -->
+        <footer class="bottom-bar">
+            <!-- Natural Language Query / Text UI -->
+            <div class="text-input-wrapper">
+                <input type="text" id="nl-query" placeholder="Ask AI ATC something (e.g., 'What's the weather?')...">
+                <button class="send-btn" title="Send Text">✉️</button>
+            </div>
+            
+            <!-- Push To Talk button (Visual) -->
+            <button class="ptt-btn" id="ptt-btn">🎙️ PUSH TO TALK</button>
+        </footer>
+
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>

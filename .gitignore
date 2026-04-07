@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Configuration / Secrets
+.env
+
+# Project specific
+ai_atc.log
+flight_plan.json
+sample_flight_plan.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
