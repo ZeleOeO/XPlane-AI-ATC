@@ -21,6 +21,27 @@ def test_imports():
     from ai_atc.voice.tts import ATCVoice
     print("  ✓ All imports OK\n")
 
+def test_callsign_resolution():
+    print("Testing callsign telephony resolution...")
+    from ai_atc.flightplan.flight_plan import FlightPlan
+    
+    # Test Airline
+    fp_baw = FlightPlan(callsign="BAW123")
+    print(f"  BAW123 -> {fp_baw.airline_callsign}")
+    assert fp_baw.airline_callsign == "Speedbird 123"
+    
+    # Test Regionals
+    fp_edv = FlightPlan(callsign="EDV456")
+    print(f"  EDV456 -> {fp_edv.airline_callsign}")
+    assert fp_edv.airline_callsign == "Endeavor 456"
+    
+    # Test GA (N-Number)
+    fp_ga = FlightPlan(callsign="N731NR")
+    print(f"  N731NR -> {fp_ga.airline_callsign}")
+    assert fp_ga.airline_callsign == "November 731NR"
+    
+    print("  ✓ Callsign resolution OK\n")
+
 def test_templates():
     print("Testing ATC templates...")
     from ai_atc.atc.decision_tree import fill_template
@@ -64,6 +85,7 @@ def test_state_machine():
 if __name__ == "__main__":
     try:
         test_imports()
+        test_callsign_resolution()
         test_templates()
         test_flight_plan()
         test_state_machine()

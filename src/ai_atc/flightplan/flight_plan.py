@@ -1,9 +1,40 @@
 from __future__ import annotations
 import json
 import logging
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
+
 logger = logging.getLogger(__name__)
+
+AIRLINE_MAP = {
+    # Major US
+    "AAL": "American",
+    "DAL": "Delta",
+    "UAL": "United",
+    "SWA": "Southwest",
+    "JBU": "JetBlue",
+    "FDX": "FedEx",
+    "UPS": "UPS",
+    "EDV": "Endeavor",
+    "SKW": "SkyWest",
+    "ASA": "Alaska",
+    "NKS": "Spirit",
+    "FFT": "Frontier",
+    # Major International
+    "BAW": "Speedbird",
+    "DLH": "Lufthansa",
+    "AFR": "Air France",
+    "EZY": "Easy",
+    "RYR": "Ryanair",
+    "KLM": "KLM",
+    "VIR": "Virgin",
+    "UAE": "Emirates",
+    "QFA": "Qantas",
+    "ACA": "Air Canada",
+    "ETH": "Ethiopian",
+    "THY": "Turkish",
+}
 @dataclass
 class Waypoint:
     name: str
@@ -63,7 +94,27 @@ class FlightPlan:
             self.waypoints[index].passed = True
     @property
     def airline_callsign(self) -> str:
-        return self.callsign.upper()
+        """
+        Resolves the telephony name if found, otherwise handles GA phonetics.
+        Example: BAW123 -> Speedbird 123, N12345 -> November 12345
+        """
+        cs = self.callsign.upper().strip()
+        
+        # 1. Check for standard 3-letter ICAO commercial prefix
+        match = re.match(r"^([A-Z]{3})(\d+[A-Z]?)$", cs)
+        if match:
+            icao, number = match.groups()
+            telephony = AIRLINE_MAP.get(icao)
+            if telephony:
+                return f"{telephony} {number}"
+            # If not found, return the split parts for cleaner LLM reading
+            return f"{icao} {number}"
+            
+        # 2. Check for GA registration (N-numbers)
+        if cs.startswith("N") and len(cs) > 1:
+            return f"November {cs[1:]}"
+            
+        return cs
 def load_flight_plan(path: str | Path) -> FlightPlan:
     path = Path(path)
     with open(path, "r", encoding="utf-8") as f:

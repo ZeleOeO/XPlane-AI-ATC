@@ -3,12 +3,12 @@
 An AI-powered Air Traffic Controller for X-Plane 11/12 that uses a hybrid decision-tree + LLM architecture to provide a professional, realistic, and responsive ATC experience. Inspired by [OpenSquawk](https://github.com/OpenSquawk/OpenSquawk).
 
 ## Features
-- 🌲 **Decision Tree Logic**: Uses a structured graph for every flight phase to ensure zero hallucinations and instant responses for routine calls.
-- 🤖 **Gemini 1.5 Flash Integration**: Cloud-based STT and LLM routing for high-accuracy transcription and intelligent intent detection.
-- 📻 **Real Radio Effects**: Custom FFmpeg audio pipeline that adds telephone-band filtering, compression, and radio static to make the ATC sound like an actual VHF radio.
-- ✅ **Readback Verification**: Actually listens to your readbacks. If you forget your squawk or the assigned runway, the controller will catch it and ask for a correction.
-- ⚙️ **System Settings GUI**: Manage your X-Plane folder, SimBrief username, and default callsign directly in the app. Settings persist between sessions.
-- 🪟 **Multi-Platform**: Full support for Windows, macOS, and Linux.
+- **Decision Tree Logic**: Uses a structured graph for every flight phase to ensure zero hallucinations and instant responses for routine calls.
+- **Gemini 1.5 Flash Integration**: Cloud-based STT and LLM routing for high-accuracy transcription and intelligent intent detection.
+- **Real Radio Effects**: Custom FFmpeg audio pipeline that adds telephone-band filtering, compression, and radio static to make the ATC sound like an actual VHF radio.
+- **Readback Verification**: Actually listens to your readbacks. If you forget your squawk or the assigned runway, the controller will catch it and ask for a correction.
+- **System Settings GUI**: Manage your X-Plane folder, SimBrief username, and default callsign directly in the app. Settings persist between sessions.
+- **Multi-Platform**: Full support for Windows, macOS, and Linux.
 
 ## Prerequisites
 - **Python 3.9+**
